@@ -21,7 +21,7 @@ try:
         insert_data_query = """
         INSERT INTO movies (title, director, year, synopsis, duration) VALUES (%s, %s, %s, %s, %s)
         """
-        print(insert_data_query % data)
+        # print(insert_data_query % data)
         cursor.execute(insert_data_query, data)
         # Hacer commit para confirmar los cambios en la base de datos
         connection.commit()

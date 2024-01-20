@@ -46,12 +46,18 @@ def display(title, director, year, synopsis, duration):
     print("Director: "+director)
     print("Sinopsis: "+synopsis)
 
+def main():
+    repeat = True
+    while repeat:
+        movieName = input('Ingresa el nombre de la película: ')
+        info = searchMovieInfo(movieName)
+        display(*info)
+        save = input('¿Quieres guardar esta película en la base de datos? [Y-N]\n')
+        if save.lower() == 'y':
+            subprocess.run(['python', 'saveMovie.py', *info])
+        again = input('¿Seguir descargando información de otra película? [Y-N]\n')
+        if again.lower != 'y':
+            repeat = False
+
 if __name__ == "__main__":
-    movieName = input('Ingresa el nombre de la película: ')
-    #El asterisco es necesario para 'desempaquetar' la tupla 
-    #y pasar cada variable como un parámetro individiual
-    info = searchMovieInfo(movieName)
-    display(*info)
-    save = input('¿Quieres guardar esta película en la base de datos? [Y-N]\n')
-    if(save == 'Y'):
-        subprocess.run(['python', 'saveMovie.py', *info])
+    main()
