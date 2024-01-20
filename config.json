@@ -1,0 +1,8 @@
+{
+    "mysql": {
+        "user": "daniel",
+        "password": "Juande123",
+        "host": "localhost",
+        "database": "moviesDB"
+    }
+}

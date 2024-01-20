@@ -1,0 +1,18 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+h1 {
+  color: #333;
+}
+
+#movieList {
+  margin-top: 20px;
+  list-style-type: none; /* Elimina los puntos de la lista */
+}
+
+#movieList li {
+  margin-bottom: 10px;
+
+}
