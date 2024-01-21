@@ -37,6 +37,17 @@ app.get('/api/movies', (req, res) => {
   });
 });
 
+// Obtener perfil de una película
+app.get('/api/movie-profile', (req, res) => {
+  connection.query('SELECT * FROM movies', (error, results) => {
+    if (error) {
+      res.json({ message: error.message });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
 // Añadir una nueva película
 /*app.post('/api/movies', (req, res) => {
   const { title, director, year } = req.body;

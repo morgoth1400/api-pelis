@@ -11,6 +11,11 @@ async function fetchAndDisplayMovies() {
       const liElement = document.createElement('li');
       liElement.textContent = `${movie.title} (${movie.year}) - Dirigida por ${movie.director}`;
       ulElement.appendChild(liElement);
+      /*TO DO: 
+      -Clicar en un elemento de la lista que te lleve a su ficha individual
+      Poner imagen en la ficha y un trailer
+      -Hacer un buscador dinámico de películas
+      */
     });
 
     movieListElement.appendChild(ulElement);
