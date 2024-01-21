@@ -1,13 +1,16 @@
 const express = require('express');
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
+const validarId = require('./middlewares/validarId');
 
 const app = express();
-const PORT = process.env.PORT || 1972;
+const PORT = 1972;
+//const PORT = process.env.PORT || 1972;
 
+// Habilita el uso de JSON, no viene integrado con Express por defecto
 app.use(bodyParser.json());
 
-// Conectar a la base de datos MySQL
+// Conexión a la base de datos MySQL
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'daniel',
@@ -23,10 +26,9 @@ connection.connect(err => {
   }
 });
 
+/* Rutas de la API */
 
-// Rutas de la API
-
-// Obtener todas las películas
+// Obtener listado de todas las películas
 app.get('/api/movies', (req, res) => {
   connection.query('SELECT * FROM movies', (error, results) => {
     if (error) {
@@ -38,10 +40,13 @@ app.get('/api/movies', (req, res) => {
 });
 
 // Obtener perfil de una película
-app.get('/api/movie-profile', (req, res) => {
-  connection.query('SELECT * FROM movies', (error, results) => {
+// validarId = Middleware para validar el ID
+app.get('/api/movie-profile/:id', validarId, (req, res) => {
+  connection.query('SELECT * FROM movies WHERE id ='+req.params.id, (error, results) => {
     if (error) {
-      res.json({ message: error.message });
+      res.status(500).json({ message: error.message });
+    } else if (results.length === 0) {
+      res.status(404).json({ message: 'Película no encontrada' });
     } else {
       res.json(results);
     }
@@ -67,8 +72,3 @@ app.use(express.static('public'));
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
-/*
-TO-DO LIST:
--WEBSCRAPEAR INFO DE LAS PELÍCULAS?
-*/

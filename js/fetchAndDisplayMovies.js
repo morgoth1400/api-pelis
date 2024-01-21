@@ -15,6 +15,9 @@ async function fetchAndDisplayMovies() {
       -Clicar en un elemento de la lista que te lleve a su ficha individual
       Poner imagen en la ficha y un trailer
       -Hacer un buscador dinámico de películas
+      -Hacer un login
+      -Hacer una tabla de usuarios
+      -Convertir contraseñas a algún cifrado y almacenarlas en la BD cifradas
       */
     });
 
