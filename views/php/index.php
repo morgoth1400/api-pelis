@@ -9,6 +9,6 @@
 <body>
   <h1>Listado de Películas</h1>
   <div id="movieList"></div>
-  <script src="/js/fetchAndDisplayMovies.js"></script>
+  <script src="/fetchAndDisplayMovies"></script>
 </body>
 </html>

@@ -9,7 +9,11 @@ async function fetchAndDisplayMovies() {
 
     moviesData.forEach(movie => {
       const liElement = document.createElement('li');
-      liElement.textContent = `${movie.title} (${movie.year}) - Dirigida por ${movie.director}`;
+      const linkElement = document.createElement('a');
+      linkElement.href = '/movie-template.php?id='+movie.id; 
+      linkElement.innerHTML = `${movie.title}  (${movie.year}) - Dirigida por ${movie.director}`;
+   
+      liElement.appendChild(linkElement);
       ulElement.appendChild(liElement); 
 
     });
@@ -17,8 +21,9 @@ async function fetchAndDisplayMovies() {
     movieListElement.appendChild(ulElement);
   } catch (error) {
     console.error('Error al obtener datos de la API:', error);
-    movieListElement.textContent = 'Error al obtener datos de la API.';
+    movieListElement.textContent = 'Error al obtener datos de la API: '+error;
   }
 }
+
 
 window.onload = fetchAndDisplayMovies;

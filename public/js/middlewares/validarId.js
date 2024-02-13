@@ -1,7 +1,9 @@
 module.exports = function validarId(req, res, next) {
-    req.params.id = parseInt(req.params.id);
-  
-    if (isNaN(req.params.id)) {
+    // console.log(req.body.id);
+    id = req.params.id
+    id = parseInt(id);
+    // console.log(req.body.id);
+    if (isNaN(id)) {
       return res.status(400).json({ message: 'ID de película no válido' });
     }
   
