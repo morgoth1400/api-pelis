@@ -1,0 +1,35 @@
+<!-- views/home.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Dynamic Page</title>
+</head>
+<body>
+  <div id="movie-details">
+    <!-- Aquí se llenarán los detalles de la película -->
+</div>
+  <script>
+    // Función para obtener detalles de la película por su ID
+    async function fetchMovieDetails() {
+        // Obtener el ID de la película de la URL
+        var movieId = '<%= movieId %>'
+        console.log(movieId);
+        // Hacer una solicitud a la API para obtener detalles de la película por su ID
+        const response = await fetch(`/api/pelis/<%= movieId %>`);
+        const movie = await response.json();
+    
+        // Rellenar la plantilla con los detalles de la película
+        const movieDetailsDiv = document.getElementById('movie-details');
+        movieDetailsDiv.innerHTML = `
+            <h2>${movie.title}</h2>
+            <p><strong>Director:</strong> ${movie.director}</p>
+            <p><strong>ID:</strong> ${movie.id}</p>
+            <p>Synopsis: ${movie.synopsis}</p>
+        `;
+    }
+    
+    // Llamar a la función para obtener detalles de la película al cargar la página
+    fetchMovieDetails();
+    </script>
+</body>
+</html>

@@ -13,10 +13,11 @@ const PORT = 1972;
 
 app.set('views', '../../views/php');
 app.engine('php', phpExpress.engine);
-app.set('view engine', 'php');
+app.set('view engine', 'ejs');
 
 app.all(/.+\.php$/, phpExpress.router);
 
+app.use(bodyParser.urlencoded({ extended: true }));
 // Habilita el uso de JSON, no viene integrado con Express por defecto
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '../')));
@@ -45,6 +46,7 @@ app.get('/', (req, res) => {
 });
 
 
+
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, '../views/php', 'login.php'));
 });
@@ -52,6 +54,17 @@ app.get('/login', (req, res) => {
 //hace falta esto?
 app.get('/movie-template.php', (req, res) => {
   res.redirect('movie-template.php');
+});
+
+app.post('/movie', (req, res) => {
+  const movieId = req.body.movieId;
+  console.log(movieId);
+  console.log(req.body);
+  // render your play.ejs file which is located in views
+  // /views/play.ejs
+  // second parameter is an object that will be accessible in your view
+  res.render('movie-template', { movieId: movieId });
+
 });
 
 app.get('/fetchAndDisplayMovies', (req, res) => {
@@ -72,27 +85,27 @@ app.get('/api/movies', (req,res) => {
   // Seleccionando una película de la lista
   // validarId = Middleware para validar el ID
   
-  app.get('/api/pelis/:id', validarId, (req, res) => {
-      /*Para pasarle el id mediante la ruta sería así:
-       /api/movies/:id
-       (En la llamada los dos puntos se omiten => /api/movies/1)
-       El id se recoge como parámetro de la request:
-       connection.query(sqlquery, [req.params.id], (error, results) => {*/
-      const sqlquery = "SELECT * FROM movies WHERE id = ?"
-      connection.query(sqlquery, parseInt(req.params.id), (error, results) => {
-        if (error) {
-          res.status(500).json({ message: error.message });
-        } else if (results.length === 0) {
-          res.status(404).json({ message: 'Película no encontrada' });
-        } else {
-          /*La función 'connection.query' devuelve un arreglo y cada elemento es una fila en la tabla
-          Se devuelve un arreglo incluso cuando se devuelve una sola columna, por lo que para devolver
-          solamente la información de una película tenemos que acceder al primer elemento del arreglo.
-          */
-          res.json(results[0]);
-        }
-      });
+app.get('/api/pelis/:id', validarId, (req, res) => {
+    /*Para pasarle el id mediante la ruta sería así:
+      /api/movies/:id
+      (En la llamada los dos puntos se omiten => /api/movies/1)
+      El id se recoge como parámetro de la request:
+      connection.query(sqlquery, [req.params.id], (error, results) => {*/
+    const sqlquery = "SELECT * FROM movies WHERE id = ?"
+    connection.query(sqlquery, parseInt(req.params.id), (error, results) => {
+      if (error) {
+        res.status(500).json({ message: error.message });
+      } else if (results.length === 0) {
+        res.status(404).json({ message: 'Película no encontrada' });
+      } else {
+        /*La función 'connection.query' devuelve un arreglo y cada elemento es una fila en la tabla
+        Se devuelve un arreglo incluso cuando se devuelve una sola columna, por lo que para devolver
+        solamente la información de una película tenemos que acceder al primer elemento del arreglo.
+        */
+        res.json(results[0]);
+      }
     });
+  });
 
 
 // Añadir una nueva película
@@ -110,6 +123,7 @@ app.get('/api/movies', (req,res) => {
 */
 
 // Iniciar el servidor
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(PORT, function (err) {
+  if (err) console.log(err);
+  console.log("Server listening on PORT", PORT);
 });

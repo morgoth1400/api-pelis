@@ -10,9 +10,31 @@ async function fetchAndDisplayMovies() {
     moviesData.forEach(movie => {
       const liElement = document.createElement('li');
       const linkElement = document.createElement('a');
-      linkElement.href = '/movie-template.php?id='+movie.id; 
+      linkElement.href = '#'; 
       linkElement.innerHTML = `${movie.title}  (${movie.year}) - Dirigida por ${movie.director}`;
-   
+
+
+      ///////////////////////////////////////////////////////////// 
+      const formElement = document.createElement('form');
+      formElement.method = 'POST';
+      formElement.action = '/movie'; // Reemplaza 'tu_ruta_del_servidor' con la URL de tu servidor
+      // Crear input oculto para enviar el id
+      const idInputElement = document.createElement('input');
+      idInputElement.type = 'hidden';
+      idInputElement.name = 'movieId';
+      idInputElement.value = movie.id;
+
+      linkElement.addEventListener('click', function(event) {
+        event.preventDefault(); // Evitar la acción predeterminada del enlace (navegar a la URL)
+        formElement.submit(); // Enviar el formulario
+      });
+      // Agregar el input al formulario
+      formElement.appendChild(idInputElement);
+
+      // Agregar el formulario al enlace
+      linkElement.appendChild(formElement);
+      ///////////////////////////////////////////////////////////// 
+
       liElement.appendChild(linkElement);
       ulElement.appendChild(liElement); 
 
