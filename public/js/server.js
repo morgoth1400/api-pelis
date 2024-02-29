@@ -58,8 +58,6 @@ app.get('/movie-template.php', (req, res) => {
 
 app.post('/movie', (req, res) => {
   const movieId = req.body.movieId;
-  console.log(movieId);
-  console.log(req.body);
   // render your play.ejs file which is located in views
   // /views/play.ejs
   // second parameter is an object that will be accessible in your view
@@ -69,6 +67,10 @@ app.post('/movie', (req, res) => {
 
 app.get('/fetchAndDisplayMovies', (req, res) => {
   res.sendFile(path.join(__dirname, 'fetchAndDisplayMovies.js'));
+});
+
+app.get('/movieDetails', (req, res) => {
+  res.sendFile(path.join(__dirname, 'movieDetails.js'));
 });
 
 

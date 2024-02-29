@@ -3,6 +3,9 @@ async function fetchAndDisplayMovies() {
 
   try {
     const response = await fetch('http://localhost:1972/api/movies');
+    if (!response.ok) {
+      throw new Error('Error al obtener detalles de la película');
+    }
     const moviesData = await response.json();
 
     const ulElement = document.createElement('ul');
