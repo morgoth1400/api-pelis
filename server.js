@@ -3,26 +3,30 @@ const mysql = require('mysql2');
 const bodyParser = require('body-parser');
 //Por algún motivo no coge 'php' como comando aunque esté en el path
 //lo que obliga a poner la ruta completa
-const phpExpress = require('php-express')({ binPath: '"C:\\Program Files\\php-8.3.2\\php.exe"' });
+// const phpExpress = require('php-express')({ binPath: '"C:\\Program Files\\php-8.3.2\\php.exe"' });
 const path = require('path');
-const validarId = require('./middlewares/validarId');
+const validarId = require('./public/js/middlewares/validarId');
 
 const app = express();
 const PORT = 1972;
 //const PORT = process.env.PORT || 1972;
 
-app.set('views', '../../views/php');
-app.engine('php', phpExpress.engine);
+//Localización y motor de plantillas EJS
+app.set('views', './views');
 app.set('view engine', 'ejs');
 
-app.all(/.+\.php$/, phpExpress.router);
+//esto en principio no hace falta mientras no utilice  php
+// app.engine('php', phpExpress.engine);
+// app.all(/.+\.php$/, phpExpress.router);
 
+//Creo que esto sirve para poder enviar variables mediante POST y GET en la URL?
 app.use(bodyParser.urlencoded({ extended: true }));
 // Habilita el uso de JSON, no viene integrado con Express por defecto
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, '../')));
+app.use(express.static(path.join(__dirname, '/public')));
 
 // Conexión a la base de datos MySQL
+//Buscar una forma más segura para no almacenar así en texto plano las credenciales de la bd ni el nombre en sí
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'daniel',
@@ -40,40 +44,41 @@ connection.connect(err => {
 
 /* Rutas de la API */
 
+
+/* RUTAS WEB */
 //Redirigir al index
 app.get('/', (req, res) => {
-  res.redirect('index.php');
+  res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
-
-
+/////////////////////////PROBAR res.redirect('/index') creando una ruta para hacer un sendfile de ese archivo, para no mostrarlo en la URL 
 
 app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, '../views/php', 'login.php'));
+  res.sendFile(path.join(__dirname, 'login.html'));
 });
 
-//hace falta esto?
-app.get('/movie-template.php', (req, res) => {
-  res.redirect('movie-template.php');
-});
-
+//ESTA ES LA FORMA PARA ENVIAR VARIABLES POST AL SERVIDOR Y REUTILIZARLAS EN UN ARCHIVO EJS(PLANTILLA JS DE HTML PARA RELLENAR CON DATOS)
 app.post('/movie', (req, res) => {
   const movieId = req.body.movieId;
-  // render your play.ejs file which is located in views
-  // /views/play.ejs
-  // second parameter is an object that will be accessible in your view
   res.render('movie-template', { movieId: movieId });
 
 });
 
+
+
+/* RUTAS JS */
+
+//cambiar estos nombres de las URL para que no sean directamente los mismos que los de los archivos js
 app.get('/fetchAndDisplayMovies', (req, res) => {
-  res.sendFile(path.join(__dirname, 'fetchAndDisplayMovies.js'));
+  res.sendFile(path.join(__dirname, 'public', 'js', 'fetchAndDisplayMovies.js'));
 });
 
 app.get('/movieDetails', (req, res) => {
-  res.sendFile(path.join(__dirname, 'movieDetails.js'));
+  res.sendFile(path.join(__dirname, 'public', 'js', 'movieDetails.js'));
 });
 
 
+
+/* RUTAS BD */
 app.get('/api/movies', (req,res) => {
     connection.query('SELECT * FROM movies', (error, results) => {
       if (error) {
