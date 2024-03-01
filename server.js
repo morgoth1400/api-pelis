@@ -32,11 +32,30 @@ app.use(
 );
 
 // Authentication and Authorization Middleware FOR ADMIN
-var auth = function (req, res, next) {
-  // if (req.session && userExists(req.session.user) && req.session.admin)
+var adminAuth = function (req, res, next) {
+  // if (req.session && req.session.user == "dani" && req.session.admin)
   if (req.session && req.session.admin) return next();
   else return res.sendStatus(401);
 }; ///////////////////////////////////////
+
+// Middleware para verificar si hay una sesión activa
+const checkSession = (req, res, next) => {
+  /*La razón por la que loggedIn se establece en res.locals 
+  es porque esto permite que esté disponible en todas las vistas 
+  que se renderizan en esa solicitud.
+  Ahora, respecto a por qué se reconoce en la plantilla sin ejecutar 
+  explícitamente la función, esto se debe a cómo funcionan los motores
+  de plantillas en Express. Cuando renderizas una plantilla, el motor 
+  de plantillas automáticamente incluye todas las variables disponibles
+  en res.locals como variables en la plantilla. Esto significa que cualquier 
+  variable que pongas en res.locals estará disponible directamente en
+  tu plantilla sin necesidad de pasarla explícitamente a través del 
+  contexto de renderizado.*/
+  res.locals.loggedIn = req.session.user ? true : false;
+  next();
+};
+
+app.use(checkSession);
 
 // Conexión a la base de datos MySQL
 const connection = mysql.createConnection({
@@ -80,8 +99,8 @@ app.post("/login", async function (req, res) {
   console.log(req.body.password);
 
   if (!req.body.username || !req.body.password) {
-    res.send("Login failed");
-    console.log("Login failed (1)");
+    res.send("Usuario o contraseña inválido");
+    // console.log("Usuario o contraseña inválido");
   } else {
     try {
       const isValidUser = await checkUser(req.body.username, req.body.password);
@@ -92,8 +111,8 @@ app.post("/login", async function (req, res) {
         // res.send("Login success!");
         res.redirect("/index");
       } else {
-        res.send("Login failed");
-        console.log("Login failed (2)");
+        res.send("Usuario o contraseña incorrecta");
+        // console.log("Usuario o contraseña incorrecta");
       }
     } catch (error) {
       console.error("Error during login:", error);
@@ -104,7 +123,7 @@ app.post("/login", async function (req, res) {
 
 app.get("/logout", function (req, res) {
   req.session.destroy();
-  res.send("Logout success!");
+  // res.send("Logout success!");
   res.redirect("/index");
 });
 
@@ -116,10 +135,10 @@ app.get("/", (req, res) => {
 
 //Ocultar extensión index
 app.get("/index", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "index.html"));
+  res.render(path.join(__dirname, "views", "index.ejs"));
 });
 
-app.get("/loginP", (req, res) => {
+app.get("/loginForm", (req, res) => {
   res.sendFile(path.join(__dirname, "views", "login.html"));
 });
 
@@ -131,7 +150,11 @@ app.post("/movie", (req, res) => {
 });
 
 // Get content endpoint ////////////////////
-app.get("/content", auth, function (req, res) {
+app.get("/adminContent", adminAuth, function (req, res) {
+  res.send("You can only see this after you've logged in AS ADMIN.");
+}); ///////////////////////////////////////
+
+app.get("/content", checkSession, function (req, res) {
   res.send("You can only see this after you've logged in.");
 }); ///////////////////////////////////////
 
