@@ -142,11 +142,15 @@ app.get("/loginForm", (req, res) => {
   res.sendFile(path.join(__dirname, "views", "login.html"));
 });
 
+app.get("/userProfile", (req, res) => {
+  res.render(path.join(__dirname, "views", "userProfile.ejs"));
+});
+
 /*ESTA ES LA FORMA PARA ENVIAR VARIABLES POST AL SERVIDOR 
 Y REUTILIZARLAS EN UN ARCHIVO EJS(PLANTILLA JS DE HTML PARA RELLENAR CON DATOS)*/
 app.post("/movie", (req, res) => {
   const movieId = req.body.movieId;
-  res.render("movie-template", { movieId: movieId });
+  res.render("movieTemplate", { movieId: movieId });
 });
 
 // Get content endpoint ////////////////////
@@ -160,14 +164,16 @@ app.get("/content", checkSession, function (req, res) {
 
 /* RUTAS JS */
 //cambiar estos nombres de las URL para que no sean directamente los mismos que los de los archivos js
-app.get("/fetchAndDisplayMovies", (req, res) => {
-  res.sendFile(
-    path.join(__dirname, "public", "js", "fetchAndDisplayMovies.js")
-  );
+app.get("/displayMovies", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "js", "displayMovies.js"));
 });
 
 app.get("/movieDetails", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "js", "movieDetails.js"));
+});
+
+app.get("/userDetails", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "js", "userDetails.js"));
 });
 
 /* RUTAS BD */
@@ -204,6 +210,23 @@ app.get("/api/pelis/:id", validarId, (req, res) => {
   });
 });
 
+app.get("/username", (req, res) => {
+  const user = req.session.user;
+  res.json({ user: user });
+});
+
+app.get("/userInfo/:user", (req, res) => {
+  const sqlquery = "SELECT * FROM users WHERE username = ?";
+  connection.query(sqlquery, req.params.user, (error, results) => {
+    if (error) {
+      res.status(500).json({ message: error.message });
+    } else if (results.length === 0) {
+      res.status(404).json({ message: "Usuario no encontrado." });
+    } else {
+      res.json(results[0]);
+    }
+  });
+});
 // Añadir una nueva película
 /*app.post('/api/movies', (req, res) => {
   const { title, director, year } = req.body;

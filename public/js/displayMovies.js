@@ -1,4 +1,4 @@
-async function fetchAndDisplayMovies() {
+async function displayMovies() {
   const movieListElement = document.getElementById("movieList");
 
   try {
@@ -48,4 +48,4 @@ async function fetchAndDisplayMovies() {
   }
 }
 
-window.onload = fetchAndDisplayMovies;
+window.onload = displayMovies;

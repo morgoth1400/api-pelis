@@ -8,12 +8,13 @@
   </head>
   <body>
     <% if (loggedIn) { %>
+    <a href="/userProfile">Perfil</a>
     <a href="/logout">Cerrar sesión</a>
     <% } else { %>
     <a href="/loginForm">Iniciar sesión</a>
     <% } %>
     <h1>Listado de Películas</h1>
     <div id="movieList"></div>
-    <script src="/fetchAndDisplayMovies"></script>
+    <script src="/displayMovies"></script>
   </body>
 </html>
